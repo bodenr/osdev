@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+OSDEV_PROJECT_LAUNCHER=${OSDEV_PROJECT_LAUNCHER:-""}
+OSDEV_EXE=`basename ${0}`
+_FALLBACK_EXE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+OSDEV_EXE_DIR=${OSDEV_HOME:-${_FALLBACK_EXE_DIR}}
+
+. ${OSDEV_EXE_DIR}/common.sh
+
+OSDEV_PLUGIN_PATHS=${OSDEV_PLUGIN_PATHS}:${OSDEV_EXE_DIR}/plugins
+OSDEV_EXE_USAGE_LINE="Usage: ${OSDEV_EXE} <command> [<arg1> <arg2>...]"
+
+register_plugins
+
+
+short_usage() {
+    echo ${OSDEV_EXE_USAGE_LINE}
+    echo "----------------------------------------------------"
+    echo "Commands (try 'osdev help' for more information)"
+    echo "----------------------------------------------------"
+    echo_plugin_usage_line OSDEV_PLUGIN_NAMES[@]
+    echo "----------------------------------------------------"
+}
+
+
+_cmd=${1}
+shift
+
+if [ -z ${_cmd} ]; then
+    short_usage
+    exit 1
+fi
+
+run_plugin ${_cmd} $@
+
