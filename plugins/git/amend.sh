@@ -10,7 +10,7 @@ OSDEV_PLUGIN_ARGS[dir]=$'(Optional) The directory to clone the change into. Defa
 OSDEV_PLUGIN_ARGS=${OSDEV_PLUGIN_ARGS}
 
 read -r -d '' OSDEV_PLUGIN_DESCRIPTION << EOM
-Fetch the upstream ${OSDEV_GIT_BASE:-${DEFAULT_GIT_BASE}} <project>
+Fetch the upstream ${OSDEV_GIT_BASE} <project>
 change (given by <change-id>) in preparation for amending it.
 The topic branch will be set to the same topic name used in the
 fetched change. If set, OSDEV_PROJECT_LAUNCHER ${OSDEV_PROJECT_LAUNCHER}
@@ -28,10 +28,10 @@ run() {
         PLUGIN_MSG='No <change-id> specified.'
         return
     fi
-    local _base=${OSDEV_GIT_BASE:-${DEFAULT_GIT_BASE}}
+    local _base=${OSDEV_GIT_BASE}
     local _project="${1}.git"
     local _chg_id=${2}
-    local _dir=${3:-/tmp/${_chg_id}}
+    local _dir=${3:-${OSDEV_CHANGE_DIR}${_chg_id}}
     git clone ${_base}${_project} ${_dir}
     pushd ${_dir}
     git review -d ${_chg_id}
@@ -40,7 +40,5 @@ run() {
     git branch -m ${_branch} ${_commit_branch}
     popd
 
-    if [ ${OSDEV_PROJECT_LAUNCHER:-''} != '' ]; then
-        ${OSDEV_PROJECT_LAUNCHER} ${_dir}
-    fi
+    launch_project ${_dir}
 }

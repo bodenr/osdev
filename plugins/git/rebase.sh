@@ -34,5 +34,7 @@ run() {
     PLUGIN_EXIT=$?
     if [ ${PLUGIN_EXIT} -ne 0 ]; then
         PLUGIN_MSG="'git' returned errors."
+    else
+        launch_project ${1}
     fi
 }

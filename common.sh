@@ -5,11 +5,28 @@ declare -Ag OSDEV_PLUGINS
 OSDEV_PLUGIN_NAMES=()
 _PLUGIN_VARS=(OSDEV_PLUGIN_VERSION OSDEV_PLUGIN_NAME OSDEV_PLUGIN_USAGE_LINE OSDEV_PLUGIN_DESCRIPTION OSDEV_PLUGIN_ARGS)
 DEFAULT_GIT_BASE='https://github.com/openstack/'
+OSDEV_GIT_BASE=${OSDEV_GIT_BASE:-${DEFAULT_GIT_BASE}}
+OSDEV_TMP_DIR=/tmp
+OSDEV_CHANGE_DIR=~/src/python/
+
+
+if [ -d ${OSDEV_CHANGE_DIR} ]; then
+    mkdir -p ${OSDEV_CHANGE_DIR}
+fi
+
+
+launch_project() {
+    if [ ${OSDEV_PROJECT_LAUNCHER:-''} != '' ]; then
+        ${OSDEV_PROJECT_LAUNCHER} ${1}
+    fi
+}
 
 unload_plugin() {
     for v in ${_PLUGIN_VARS[@]}; do
         unset ${v}
     done
+    unset PLUGIN_EXIT
+    unset PLUGIN_MSG
 }
 
 run_plugin() {
@@ -20,8 +37,9 @@ run_plugin() {
     if [ ${PLUGIN_EXIT:-0} -ne 0 ]; then
         echo "ERROR: ${PLUGIN_MSG}"
     fi
+    local _exit=${PLUGIN_EXIT:-0}
     unload_plugin
-    exit ${PLUGIN_EXIT:-0}
+    exit ${_exit}
 }
 
 for_plugins_in() {
