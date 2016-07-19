@@ -28,14 +28,16 @@ run() {
         PLUGIN_MSG='No <change-id> specified.'
         return
     fi
-    local _base=${OSDEV_GIT_BASE}
     local _project="${1}.git"
-    local _chg_id=${2}
-    local _dir=${3:-${OSDEV_TMP_DIR}${_chg_id}}
-    git clone ${_base}${_project} ${_dir}
+    local _dir=${3:-${OSDEV_SHORT_TERM_DIR}${2}}
+
+    clone ${_project} ${_dir}
     pushd ${_dir}
-    git review -d ${_chg_id}
+
+    git review -d ${2} || (echo "Failed to fetch change: ${2}";exit 1)
     popd
 
     launch_project ${_dir}
+
+    echo "Change ready for review in: ${_dir}"
 }

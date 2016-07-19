@@ -28,17 +28,16 @@ run() {
         PLUGIN_MSG='No <change-id> specified.'
         return
     fi
-    local _base=${OSDEV_GIT_BASE}
     local _project="${1}.git"
     local _chg_id=${2}
-    local _dir=${3:-${OSDEV_CHANGE_DIR}${_chg_id}}
-    git clone ${_base}${_project} ${_dir}
-    pushd ${_dir}
-    git review -d ${_chg_id}
+    local _dest=${3:-${OSDEV_LONG_TERM_DIR}/${_chg_id}}
+    clone ${_project} ${_dest}
+    pushd ${_dest}
+    git review -d ${_chg_id} || exit 1
     local _branch=`git rev-parse --abbrev-ref HEAD`
     local _commit_branch=`echo ${_branch} | cut -d"/" -f3-`
-    git branch -m ${_branch} ${_commit_branch}
+    git branch -m ${_branch} ${_commit_branch} || exit 1
     popd
 
-    launch_project ${_dir}
+    launch_project ${_dest}
 }

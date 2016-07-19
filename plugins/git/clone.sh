@@ -2,10 +2,11 @@
 
 OSDEV_PLUGIN_VERSION=1.0
 OSDEV_PLUGIN_NAME=clone
-OSDEV_PLUGIN_USAGE_LINE="clone <project> [git-args]"
+OSDEV_PLUGIN_USAGE_LINE="clone <project> [dir] [branch-or-tag]"
 declare -xgA OSDEV_PLUGIN_ARGS
 OSDEV_PLUGIN_ARGS[project]=$'(Required) The github project name to checkout. For example \'neutron\'.'
-OSDEV_PLUGIN_ARGS[git-args]=$'(Optional) Additional arguments to pass onto the git clone command. Defaults to none.'
+OSDEV_PLUGIN_ARGS[dir]=$'(Optional) Directory to clone the project into.'
+OSDEV_PLUGIN_ARGS[branch-or-tag]=$'(Optional) The git branch or tag to checkout.'
 OSDEV_PLUGIN_ARGS=${OSDEV_PLUGIN_ARGS}
 
 
@@ -23,14 +24,10 @@ run() {
         PLUGIN_MSG='No <project> specified.'
         return
     fi
-    local _base=${OSDEV_GIT_BASE}
-    local _project="${1}.git"
-    local _git_args=${2:-''}
-    git clone ${_base}${_project} ${_git_args}
-    PLUGIN_EXIT=$?
-    if [ ${PLUGIN_EXIT} -ne 0 ]; then
-        PLUGIN_MSG="'git clone' returned errors."
-    fi
 
-    launch_project ${_dir}
+    local _project="${1}.git"
+    local _dest=${2:-./${1}}
+    clone ${_project} ${_dest} ${3:-master}
+
+    launch_project ${_dest}
 }

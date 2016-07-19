@@ -2,10 +2,10 @@
 
 OSDEV_PLUGIN_VERSION=1.0
 OSDEV_PLUGIN_NAME=rebase
-OSDEV_PLUGIN_USAGE_LINE="rebase <repo-dir> [branch]"
+OSDEV_PLUGIN_USAGE_LINE="rebase <dir-or-change> [branch]"
 declare -xgA OSDEV_PLUGIN_ARGS
-OSDEV_PLUGIN_ARGS[project]=$'(Required) The git repo directory to rebase.'
-OSDEV_PLUGIN_ARGS[git-args]=$'(Optional) The branch to pull/rebase from. Defaults to \'master\'.'
+OSDEV_PLUGIN_ARGS[dir-or-change]=$'(Required) The (existing) git repo directory to rebase or an upstream change ID to fetch for rebase.'
+OSDEV_PLUGIN_ARGS[branch]=$'(Optional) The branch to pull/rebase from. Defaults to \'master\'.'
 OSDEV_PLUGIN_ARGS=${OSDEV_PLUGIN_ARGS}
 
 
@@ -18,14 +18,13 @@ EOM
 run() {
     if [[ $# -lt 1 ]]; then
         PLUGIN_EXIT=1
-        PLUGIN_MSG='No <repo-dir> specified.'
+        PLUGIN_MSG='No <dir-or-change> specified.'
         return
     fi
 
+    local _repo=${1}
     if [ ! -d ${1} ]; then
-        PLUGIN_EXIT=2
-        PLUGIN_MSG="The <repo-dir> ${1} is not a directory."
-        return
+        clone
     fi
 
     pushd ${1}

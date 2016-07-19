@@ -10,6 +10,7 @@ OSDEV_EXE_DIR=${OSDEV_HOME:-${_FALLBACK_EXE_DIR}}
 OSDEV_PLUGIN_PATHS=${OSDEV_PLUGIN_PATHS}:${OSDEV_EXE_DIR}/plugins
 OSDEV_EXE_USAGE_LINE="Usage: ${OSDEV_EXE} <command> [<arg1> <arg2>...]"
 
+setup
 register_plugins
 
 

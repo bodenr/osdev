@@ -1,19 +1,60 @@
 #!/usr/bin/env bash
 
+OSDEV_GIT_BASE=${OSDEV_GIT_BASE:-'https://github.com/openstack/'}
+OSDEV_SHORT_TERM_DIR=${OSDEV_SHORT_TERM_DIR:-/tmp/}
+OSDEV_LONG_TERM_DIR=${OSDEV_LONG_TERM_DIR:-~/src/python/}
+OSDEV_GIT_CACHE_DIR=${OSDEV_GIT_CACHE_DIR:-~/.osdev/}
+
 
 declare -Ag OSDEV_PLUGINS
 OSDEV_PLUGIN_NAMES=()
 _PLUGIN_VARS=(OSDEV_PLUGIN_VERSION OSDEV_PLUGIN_NAME OSDEV_PLUGIN_USAGE_LINE OSDEV_PLUGIN_DESCRIPTION OSDEV_PLUGIN_ARGS)
-DEFAULT_GIT_BASE='https://github.com/openstack/'
-OSDEV_GIT_BASE=${OSDEV_GIT_BASE:-${DEFAULT_GIT_BASE}}
-OSDEV_TMP_DIR=/tmp/
-OSDEV_CHANGE_DIR=~/src/python/
 
 
-if [ -d ${OSDEV_CHANGE_DIR} ]; then
-    mkdir -p ${OSDEV_CHANGE_DIR}
-fi
+_exec() {
+    ${1}
+    local _rc=$?
+    if [ ${_rc} -ne 0 ]; then
+        echo ${2:-'${1} failed with: ${_rc}'}
+        exit ${_rc}
+    fi
+}
 
+clone() {
+    local _git_url=${1}
+
+    if [[ ${_git_url} != *'://'* ]]; then
+        _git_url=${OSDEV_GIT_BASE}${1}
+    fi
+
+    local _src=${OSDEV_GIT_CACHE_DIR}/`echo ${_git_url} | sed 's/https\?:\/\///' | sed 's,/,.,g'`
+
+    if [ ! -d ${_src} ]; then
+        _exec "git clone ${_git_url} ${_src}"
+    fi
+
+    local _dest=${2:-./`basename ${_src} '.git'`}
+    cp -r ${_src} ${_dest}
+    local _branch=${3:-master}
+    pushd ${_dest}
+    _exec "git checkout master"
+    _exec "git pull"
+    _exec "git checkout ${_branch}"
+    popd
+}
+
+setup() {
+    if [ ! -d ${OSDEV_SHORT_TERM_DIR} ]; then
+        _exec "mkdir -p ${OSDEV_SHORT_TERM_DIR}"
+    fi
+    if [ ! -d ${OSDEV_LONG_TERM_DIR} ]; then
+        _exec "mkdir -p ${OSDEV_LONG_TERM_DIR}"
+    fi
+    if [ ! -d ${OSDEV_GIT_CACHE_DIR} ]; then
+        echo "Create git dir"
+        _exec "mkdir -p ${OSDEV_GIT_CACHE_DIR}"
+    fi
+}
 
 launch_project() {
     if [ ${OSDEV_PROJECT_LAUNCHER:-''} != '' ]; then
