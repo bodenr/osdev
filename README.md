@@ -1,5 +1,7 @@
 # osdev
 
+THIS PROJECT IS A WORK IN PROGRESS
+
 osdev is a pluggable bash script that automates a number of my OpenStack development
 tasks. While the current plugins focus on automating a number of [OpenStack gerrit workflows](http://docs.openstack.org/infra/manual/developers.html),
 the simple plugin approach can integrate with any scripting.

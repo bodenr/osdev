@@ -2,38 +2,50 @@
 
 OSDEV_PLUGIN_VERSION=1.0
 OSDEV_PLUGIN_NAME=rebase
-OSDEV_PLUGIN_USAGE_LINE="rebase <dir-or-change> [branch]"
-declare -xgA OSDEV_PLUGIN_ARGS
-OSDEV_PLUGIN_ARGS[dir-or-change]=$'(Required) The (existing) git repo directory to rebase or an upstream change ID to fetch for rebase.'
-OSDEV_PLUGIN_ARGS[branch]=$'(Optional) The branch to pull/rebase from. Defaults to \'master\'.'
-OSDEV_PLUGIN_ARGS=${OSDEV_PLUGIN_ARGS}
+declare -xga OSDEV_PLUGIN_ARGS=(dir_or_change)
+declare -xgA OSDEV_PLUGIN_KW_ARGS
+OSDEV_PLUGIN_KW_ARGS[project]=$'If [dir_or_change] is a change ID, <project> must be set to the change project.'
+OSDEV_PLUGIN_KW_ARGS[branch:master]=$'The branch to pull/rebase from. Defaults to \'master\'.'
+OSDEV_PLUGIN_KW_ARGS=${OSDEV_PLUGIN_KW_ARGS}
 
 
 read -r -d '' OSDEV_PLUGIN_DESCRIPTION << EOM
-Rebase the current branch of the said <repo-dir> by pulling
-and doing an interactive rebase from the said [branch].
+Do an interactive rebase on the said [dir_or_change]. If [dir_or_change] is
+an existing directory, an interactive rebase is started atop the current
+branch from <branch> (defaults to 'master'). If [dir_or_change] is a change ID
+the <project> must be specified and the said [dir_or_change] is fetched from
+gerrit before starting an interactive rebase from the latest <branch>.
+If defined, the [dir_or_change] will be launched via 'OSDEV_PROJECT_LAUNCHER'
+${OSDEV_PROJECT_LAUNCHER} once cloned.
 EOM
 
 
 run() {
-    if [[ $# -lt 1 ]]; then
-        PLUGIN_EXIT=1
-        PLUGIN_MSG='No <dir-or-change> specified.'
-        return
+    local _repo=${ARGS[1]}
+    if [ ! -d ${_repo} ]; then
+        if [[ ${KWARGS[project]:-''} == '' ]]; then
+            echo "<project> must be set when using change ID."
+            exit 1
+        fi
+        clone ${_repo} ${OSDEV_SHORT_TERM_DIR}/${_repo}
+        pushd ${OSDEV_SHORT_TERM_DIR}/${_repo}
+        git review -d ${_repo} || (echo "Failed to fetch change: ${_repo}";exit 1)
+        local _branch=`git rev-parse --abbrev-ref HEAD`
+        local _commit_branch=`echo ${_branch} | cut -d"/" -f3-`
+        git branch -m ${_branch} ${_commit_branch} || exit 1
+        popd
+        _repo=${OSDEV_SHORT_TERM_DIR}/${_repo}
     fi
 
-    local _repo=${1}
-    if [ ! -d ${1} ]; then
-        clone
-    fi
-
-    pushd ${1}
+    pushd ${_repo}
     local _branch=`git rev-parse --abbrev-ref HEAD`
-    git checkout ${2:-master} && git pull && git checkout ${_branch} && git rebase -i ${2:-master}
+    git checkout ${KWARGS[branch]} && git pull && git checkout ${_branch} && git rebase -i ${KWARGS[branch]}
     PLUGIN_EXIT=$?
     if [ ${PLUGIN_EXIT} -ne 0 ]; then
         PLUGIN_MSG="'git' returned errors."
-    else
-        launch_project ${1}
+        return
     fi
+
+    launch_project ${_repo}
+    echo "${_rep} interactive rebase started from ${KWARGS[branch]}"
 }

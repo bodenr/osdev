@@ -2,45 +2,40 @@
 
 OSDEV_PLUGIN_VERSION=1.0
 OSDEV_PLUGIN_NAME=new-change
-OSDEV_PLUGIN_USAGE_LINE="new-change <project> <topic> [dependant-id]"
-declare -xgA OSDEV_PLUGIN_ARGS
-OSDEV_PLUGIN_ARGS[project]=$'(Required) The github project name to checkout. For example \'neutron\'.'
-OSDEV_PLUGIN_ARGS[topic]=$'(Required) The topic branch name to use for the change.'
-OSDEV_PLUGIN_ARGS[dependant-id]=$'(Optional) The change ID the new topic depends on.'
-OSDEV_PLUGIN_ARGS=${OSDEV_PLUGIN_ARGS}
+declare -xga OSDEV_PLUGIN_ARGS=(project topic)
+declare -xgA OSDEV_PLUGIN_KW_ARGS
+OSDEV_PLUGIN_KW_ARGS[depends_id]=$'The change ID the new topic depends on.'
+OSDEV_PLUGIN_KW_ARGS[dir]=$'Local directory to clone the project into.'
+OSDEV_PLUGIN_KW_ARGS=${OSDEV_PLUGIN_KW_ARGS}
 
 
 read -r -d '' OSDEV_PLUGIN_DESCRIPTION << EOM
-Start a new change for the said <project> on the said <topic> branch.
+Start a new change for [project] on the new [topic] branch. If specified
+the [topic] branch will depend on change ID <depends_id>. The repository
+will be created in <dir> if specified, otherwise 'OSDEV_LONG_TERM_DIR'
+${OSDEV_LONG_TERM_DIR} is used. If defined, the cloned [project] will
+be launched via 'OSDEV_PROJECT_LAUNCHER' ${OSDEV_PROJECT_LAUNCHER}
+once cloned.
 EOM
 
 
 run() {
-    if [[ $# -lt 1 ]]; then
-        PLUGIN_EXIT=1
-        PLUGIN_MSG='No <project> specified.'
-        return
-    elif [[ $# -lt 2 ]]; then
-        PLUGIN_EXIT=2
-        PLUGIN_MSG='No <topic> specified.'
-        return
+    local _project="${ARGS[0]}.git"
+    local _topic="${ARGS[1]}"
+
+    local _dir=${KWARGS[dir]:-${OSDEV_LONG_TERM_DIR}/${ARGS[0]}-${ARGS[1]}}
+    clone ${_project} ${_dir}
+    pushd ${_dir}
+
+    if [ ${KWARGS[depends_id]:-''} != '' ]; then
+        git review -d ${KWARGS[depends_id]} || (echo "Failed to fetch depends change: ${KWARGS[depends_id]}";exit 1)
     fi
 
-    local _project="${1}.git"
-    local _dest=${OSDEV_LONG_TERM_DIR}/${1}-${2}
-
-    clone ${_project} ${_dest}
-    pushd ${_dest}
-
-    if [ ${3:-''} != '' ]; then
-        git review -d ${3} || (echo "Failed to fetch change: ${3}";exit 1)
-    fi
-
-    git checkout -b ${2} || exit 1
+    git checkout -b ${_topic} || (echo "Failed to checkout branch: ${_topic}";exit 1)
 
     popd
 
-    launch_project ${_dest}
+    launch_project ${_dir}
 
-    echo "New change ready for editing in: ${_dest}"
+    echo "New ${_project} topic ${_topic} ready for editing in: ${_dir}"
 }

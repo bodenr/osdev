@@ -2,32 +2,36 @@
 
 OSDEV_PLUGIN_VERSION=1.0
 OSDEV_PLUGIN_NAME=clone
-OSDEV_PLUGIN_USAGE_LINE="clone <project> [dir] [branch-or-tag]"
-declare -xgA OSDEV_PLUGIN_ARGS
-OSDEV_PLUGIN_ARGS[project]=$'(Required) The github project name to checkout. For example \'neutron\'.'
-OSDEV_PLUGIN_ARGS[dir]=$'(Optional) Directory to clone the project into.'
-OSDEV_PLUGIN_ARGS[branch-or-tag]=$'(Optional) The git branch or tag to checkout.'
-OSDEV_PLUGIN_ARGS=${OSDEV_PLUGIN_ARGS}
+declare -xga OSDEV_PLUGIN_ARGS=(project branch:master)
+declare -xgA OSDEV_PLUGIN_KW_ARGS
+OSDEV_PLUGIN_KW_ARGS[dir]=$'Local directory to clone the project into.'
+OSDEV_PLUGIN_KW_ARGS=${OSDEV_PLUGIN_KW_ARGS}
 
 
 read -r -d '' OSDEV_PLUGIN_DESCRIPTION << EOM
-Clone the upstream ${OSDEV_GIT_BASE} <project>
-optionally passing along git arugments. If set, OSDEV_PROJECT_LAUNCHER
-${OSDEV_PROJECT_LAUNCHER} will be used to launch
-the cloned project.
+Clone [project] from the current 'OSDEV_GIT_BASE' ${OSDEV_GIT_BASE}
+optionally specifying the [branch] to clone (defaulting to ${OSDEV_BRANCH}).
+If specified the [project] will be cloned into the said <dir>, otherwise the
+default 'OSDEV_LONG_TERM_DIR' ${OSDEV_LONG_TERM_DIR} is used. If defined,
+the cloned [project] will be launched via 'OSDEV_PROJECT_LAUNCHER'
+${OSDEV_PROJECT_LAUNCHER} once cloned.
+
+Examples
+
+Clone neutron into /tmp/neutron:
+    ${OSDEV_EXE} ${OSDEV_PLUGIN_NAME} --dir /tmp neutron
+
+Clone neutron stable/mitaka branch into ${OSDEV_LONG_TERM_DIR}:
+    ${OSDEV_EXE} ${OSDEV_PLUGIN_NAME} neutron stable/mitaka
 EOM
 
 
 run() {
-    if [[ $# -lt 1 ]]; then
-        PLUGIN_EXIT=1
-        PLUGIN_MSG='No <project> specified.'
-        return
-    fi
+    local _project="${ARGS[0]}.git"
+    local _branch="${ARGS[1]:-${OSDEV_BRANCH}}"
+    local _dir=${KWARGS[dir]:-${OSDEV_LONG_TERM_DIR}/${ARGS[0]}}
+    clone ${_project} ${_dir} ${_branch}
 
-    local _project="${1}.git"
-    local _dest=${2:-./${1}}
-    clone ${_project} ${_dest} ${3:-master}
-
-    launch_project ${_dest}
+    launch_project ${_dir}
+    echo "Cloned ${_project} branch ${_branch} into ${_dir}"
 }
