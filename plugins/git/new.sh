@@ -10,11 +10,11 @@ OSDEV_PLUGIN_KW_ARGS=${OSDEV_PLUGIN_KW_ARGS}
 
 
 read -r -d '' OSDEV_PLUGIN_DESCRIPTION << EOM
-Start a new change for [project] on the new [topic] branch. If specified
-the [topic] branch will depend on change ID <depends_id>. The repository
-will be created in <dir> if specified, otherwise 'OSDEV_LONG_TERM_DIR'
-${OSDEV_LONG_TERM_DIR} is used. If defined, the cloned [project] will
-be launched via 'OSDEV_PROJECT_LAUNCHER' ${OSDEV_PROJECT_LAUNCHER}
+Start a new change for [project] on the new [topic] branch. If specified \
+the [topic] branch will depend on change ID <depends_id>. The repository \
+will be created in <dir> if specified, otherwise 'OSDEV_LONG_TERM_DIR' \
+${OSDEV_LONG_TERM_DIR} is used. If defined, the cloned [project] will \
+be launched via 'OSDEV_PROJECT_LAUNCHER' ${OSDEV_PROJECT_LAUNCHER} \
 once cloned.
 EOM
 

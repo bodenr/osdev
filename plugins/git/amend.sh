@@ -8,10 +8,10 @@ OSDEV_PLUGIN_KW_ARGS[dir]=$'The directory to clone the change into. Defaults to 
 OSDEV_PLUGIN_KW_ARGS=${OSDEV_PLUGIN_KW_ARGS}
 
 read -r -d '' OSDEV_PLUGIN_DESCRIPTION << EOM
-Clone the upstream [project] and fetch the said [change-id] atop
-it in preparation for amending. If specified, the said <dir> will be
-used, otherwise 'OSDEV_LONG_TERM_DIR' ${OSDEV_LONG_TERM_DIR} is used.
-If defined, the cloned [project] will be launched via 'OSDEV_PROJECT_LAUNCHER'
+Clone the upstream [project] and fetch the said [change-id] atop \
+it in preparation for amending. If specified, the said <dir> will be \
+used, otherwise 'OSDEV_LONG_TERM_DIR' ${OSDEV_LONG_TERM_DIR} is used. \
+If defined, the cloned [project] will be launched via 'OSDEV_PROJECT_LAUNCHER' \
 ${OSDEV_PROJECT_LAUNCHER} once cloned.
 EOM
 

@@ -7,7 +7,7 @@ declare -xgA OSDEV_PLUGIN_KW_ARGS
 OSDEV_PLUGIN_KW_ARGS=${OSDEV_PLUGIN_KW_ARGS}
 
 read -r -d '' OSDEV_PLUGIN_DESCRIPTION << EOM
-Sets the OSDEV env variable [name] to [value]. This setting is
+Sets the OSDEV env variable [name] to [value]. This setting is \
 persisted in ${OSDEV_RC_PATH}.
 
 EOM

@@ -8,7 +8,7 @@ declare -xgA OSDEV_PLUGIN_KW_ARGS
 OSDEV_PLUGIN_KW_ARGS=${OSDEV_PLUGIN_KW_ARGS}
 
 read -r -d '' OSDEV_PLUGIN_DESCRIPTION << EOM
-Prints detailed usage for the specified <command>, or for all plugins if
+Prints detailed usage for the specified <command>, or for all plugins if \
 <command> is not specified.
 
 Examples
@@ -34,7 +34,7 @@ plugin_help() {
 
     echo ""
     echo "Description:"
-    echo "${OSDEV_PLUGIN_DESCRIPTION}"
+    echo "    ${OSDEV_PLUGIN_DESCRIPTION}"
     echo ""
 
     echo "Optional Parameters:"

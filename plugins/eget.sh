@@ -7,9 +7,9 @@ declare -xgA OSDEV_PLUGIN_KW_ARGS
 OSDEV_PLUGIN_KW_ARGS=${OSDEV_PLUGIN_KW_ARGS}
 
 read -r -d '' OSDEV_PLUGIN_DESCRIPTION << EOM
-Prints osdev environment variables. If [name] is given the said
-variable's current value is printed. If [name] is not given
-all current OSDEV env variables are printed. When [name] is specified
+Prints osdev environment variables. If [name] is given the said \
+variable's current value is printed. If [name] is not given \
+all current OSDEV env variables are printed. When [name] is specified \
 it is automatically converted to the form OSDEV_<name>
 
 EOM

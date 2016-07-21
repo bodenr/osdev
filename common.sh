@@ -160,7 +160,21 @@ validate_plugin_args() {
     fi
 
     for _kw in "${!KWARGS[@]}"; do
-        if [[ ${OSDEV_PLUGIN_KW_ARGS[$_kw]:-''} == '' ]]; then
+        local _valid_kw=0
+
+        for _plugin_kw_name in "${!OSDEV_PLUGIN_KW_ARGS[@]}"; do
+            local _default=''
+            if [[ ${_plugin_kw_name} == *':'* ]]; then
+                _default=`echo ${_plugin_kw_name} | cut -d ':' -f 2`
+                _plugin_kw_name=`echo ${_plugin_kw_name} | cut -d ':' -f 1`
+            fi
+            if [ ${_kw} == ${_plugin_kw_name} ]; then
+                _valid_kw=1
+                break
+            fi
+        done
+
+        if [ ${_valid_kw}  -eq 0 ]; then
             echo "Invalid kwarg: ${_kw}"
             exit 1
         fi

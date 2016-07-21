@@ -7,8 +7,8 @@ declare -xgA OSDEV_PLUGIN_KW_ARGS
 OSDEV_PLUGIN_KW_ARGS=${OSDEV_PLUGIN_KW_ARGS}
 
 read -r -d '' OSDEV_PLUGIN_DESCRIPTION << EOM
-Prints the current OSDEV project when run without any parameters.
-If [project_name] is specified, the current OSDEV project will be set to
+Prints the current OSDEV project when run without any parameters. \
+If [project_name] is specified, the current OSDEV project will be set to \
 the said [project_name].
 EOM
 

@@ -9,11 +9,11 @@ OSDEV_PLUGIN_KW_ARGS=${OSDEV_PLUGIN_KW_ARGS}
 
 
 read -r -d '' OSDEV_PLUGIN_DESCRIPTION << EOM
-Clone [project] from the current 'OSDEV_GIT_BASE' ${OSDEV_GIT_BASE}
-optionally specifying the [branch] to clone (defaulting to ${OSDEV_BRANCH}).
-If specified the [project] will be cloned into the said <dir>, otherwise the
-default 'OSDEV_LONG_TERM_DIR' ${OSDEV_LONG_TERM_DIR} is used. If defined,
-the cloned [project] will be launched via 'OSDEV_PROJECT_LAUNCHER'
+Clone [project] from the current 'OSDEV_GIT_BASE' ${OSDEV_GIT_BASE} \
+optionally specifying the [branch] to clone (defaulting to ${OSDEV_BRANCH}). \
+If specified the [project] will be cloned into the said <dir>, otherwise the \
+default 'OSDEV_LONG_TERM_DIR' ${OSDEV_LONG_TERM_DIR} is used. If defined, \
+the cloned [project] will be launched via 'OSDEV_PROJECT_LAUNCHER' \
 ${OSDEV_PROJECT_LAUNCHER} once cloned.
 
 Examples

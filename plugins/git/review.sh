@@ -9,11 +9,11 @@ OSDEV_PLUGIN_KW_ARGS=${OSDEV_PLUGIN_KW_ARGS}
 
 
 read -r -d '' OSDEV_PLUGIN_DESCRIPTION << EOM
-Fetch the upstream ${OSDEV_GIT_BASE} <project> change
-(given by <change_id>) in preparation for reviewing it.
-If specified the repo and change will be in <dir>, otherwise
-the default ${OSDEV_SHORT_TERM_DIR}<change_id> will be used.
-If set, OSDEV_PROJECT_LAUNCHER ${OSDEV_PROJECT_LAUNCHER}
+Fetch the upstream ${OSDEV_GIT_BASE} <project> change \
+(given by <change_id>) in preparation for reviewing it. \
+If specified the repo and change will be in <dir>, otherwise \
+the default ${OSDEV_SHORT_TERM_DIR}<change_id> will be used. \
+If set, OSDEV_PROJECT_LAUNCHER ${OSDEV_PROJECT_LAUNCHER} \
 will be used to launch the change directory.
 EOM
 
