@@ -41,31 +41,39 @@ Usage: osdev <command> [<arg1> <arg2>...]
 ----------------------------------------------------
 Commands (try 'osdev help' for more information)
 ----------------------------------------------------
-amend <project> <change-id> [dir]
-clone <project> [git-args]
-rebase <repo-dir> [branch]
-review <project> <change-id> [dir]
+eget [name]
+eset [name] [value]
+amend --dir <dir> [change_id] <project>
+clone --dir <dir> <project> <branch>
+new --dir <dir> --depends_id <depends_id> <project> [topic]
+rebase --project <project> --branch <branch> [dir_or_change]
+review --dir <dir> <project> [change_id]
 help [command]
+project [project_name]
 ----------------------------------------------------
 ```
 
 For details on an individual command:
 ```
 $ osdev help amend
-amend (v1.0)
 --------------------------------------------------------
-Usage:        amend <project> <change-id> [dir]
-Description:  Fetch the upstream https://github.com/openstack/ <project>
-change (given by <change-id>) in preparation for amending it.
-The topic branch will be set to the same topic name used in the
-fetched change. If set, OSDEV_PROJECT_LAUNCHER /usr/local/pycharm-5.0.3/bin/pycharm.sh
-will be used to launch the change directory.
+Plugin:
+    amend (v1.0)
 
-Paramenters:
-  change-id -- (Required) The gerrit change ID to retrieve for amending.
-  project -- (Required) The github project name to checkout. For example 'neutron'.
-  dir -- (Optional) The directory to clone the change into. Defaults to /tmp/<change-id>
+Usage:
+    osdev amend --dir <dir> [change_id] <project>
+
+Description:
+Clone the upstream [project] and fetch the said [change-id] atop
+it in preparation for amending. If specified, the said <dir> will be
+used, otherwise 'OSDEV_LONG_TERM_DIR' /home/boden/src/python/ is used.
+If defined, the cloned [project] will be launched via 'OSDEV_PROJECT_LAUNCHER'
+/usr/local/pycharm-5.0.3/bin/pycharm.sh once cloned.
+
+Optional Parameters:
+    dir -- The directory to clone the change into. Defaults to /tmp/<change-id>
 --------------------------------------------------------
+
 ```
 
 For details on all commands:
@@ -75,33 +83,36 @@ Usage: osdev <command> [<arg1> <arg2>...]
 
 Installed command plugins:
 
-amend (v1.0)
 --------------------------------------------------------
-Usage:        amend <project> <change-id> [dir]
-Description:  Fetch the upstream https://github.com/openstack/ <project>
-change (given by <change-id>) in preparation for amending it.
-The topic branch will be set to the same topic name used in the
-fetched change. If set, OSDEV_PROJECT_LAUNCHER /usr/local/pycharm-5.0.3/bin/pycharm.sh
-will be used to launch the change directory.
+Plugin:
+    eget (v1.0)
 
-Paramenters:
-  change-id -- (Required) The gerrit change ID to retrieve for amending.
-  project -- (Required) The github project name to checkout. For example 'neutron'.
-  dir -- (Optional) The directory to clone the change into. Defaults to /tmp/<change-id>
+Usage:
+    osdev eget [name]
+
+Description:
+Prints osdev environment variables. If [name] is given the said
+variable's current value is printed. If [name] is not given
+all current OSDEV env variables are printed. When [name] is specified
+it is automatically converted to the form OSDEV_<name>
+
+Optional Parameters:
 --------------------------------------------------------
 
-clone (v1.0)
 --------------------------------------------------------
-Usage:        clone <project> [git-args]
-Description:  Clone the upstream https://github.com/openstack/ <project>
-optionally passing along git arugments. If set, OSDEV_PROJECT_LAUNCHER
-/usr/local/pycharm-5.0.3/bin/pycharm.sh will be used to launch
-the cloned project.
+Plugin:
+    eset (v1.0)
 
-Paramenters:
-  git-args -- (Optional) Additional arguments to pass onto the git clone command. Defaults to none.
-  project -- (Required) The github project name to checkout. For example 'neutron'.
+Usage:
+    osdev eset [name] [value]
+
+Description:
+Sets the OSDEV env variable [name] to [value]. This setting is
+persisted in /home/boden/.osdev//.osdevrc.
+
+Optional Parameters:
 --------------------------------------------------------
+
 ...
 ```
 
