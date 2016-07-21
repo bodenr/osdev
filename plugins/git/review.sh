@@ -4,15 +4,15 @@ OSDEV_PLUGIN_VERSION=1.0
 OSDEV_PLUGIN_NAME=review
 declare -xga OSDEV_PLUGIN_ARGS=(project change_id)
 declare -xgA OSDEV_PLUGIN_KW_ARGS
-OSDEV_PLUGIN_KW_ARGS[dir]=$'The directory to clone the change into. Defaults to ${OSDEV_SHORT_TERM_DIR}<change-id>'
+OSDEV_PLUGIN_KW_ARGS[dir]="The directory to clone the change into. Defaults to ${OSDEV_SHORT_TERM_DIR}<change-id>"
 OSDEV_PLUGIN_KW_ARGS=${OSDEV_PLUGIN_KW_ARGS}
 
 
 read -r -d '' OSDEV_PLUGIN_DESCRIPTION << EOM
 Fetch the upstream ${OSDEV_GIT_BASE} <project> change
-(given by <change-id>) in preparation for reviewing it.
+(given by <change_id>) in preparation for reviewing it.
 If specified the repo and change will be in <dir>, otherwise
-the default ${OSDEV_SHORT_TERM_DIR}<change-id> will be used.
+the default ${OSDEV_SHORT_TERM_DIR}<change_id> will be used.
 If set, OSDEV_PROJECT_LAUNCHER ${OSDEV_PROJECT_LAUNCHER}
 will be used to launch the change directory.
 EOM

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 OSDEV_PROJECT_LAUNCHER=${OSDEV_PROJECT_LAUNCHER:-""}
 OSDEV_GIT_BASE=${OSDEV_GIT_BASE:-'https://github.com/openstack/'}
@@ -6,6 +6,7 @@ OSDEV_SHORT_TERM_DIR=${OSDEV_SHORT_TERM_DIR:-/tmp/}
 OSDEV_LONG_TERM_DIR=${OSDEV_LONG_TERM_DIR:-~/src/python/}
 OSDEV_GIT_CACHE_DIR=${OSDEV_GIT_CACHE_DIR:-~/.osdev/}
 OSDEV_BRANCH=${OSDEV_BRANCH:-master}
+OSDEV_RC_PATH=${OSDEV_GIT_CACHE_DIR}/.osdevrc
 
 
 declare -Ag OSDEV_PLUGINS
@@ -105,7 +106,17 @@ clone() {
     popd
 }
 
+rc_set() {
+    grep "${1}=" ${OSDEV_RC_PATH} > /dev/null
+    if [ $? -ne 0 ]; then
+        echo "${1}=${2}" >> ${OSDEV_RC_PATH}
+    else
+        sed -i "s/^\($1\s*=\s*\).*\$/\1$2/" ${OSDEV_RC_PATH} || (echo "Failed to update ${OSDEV_RC_PATH}";exit 1)
+    fi
+}
+
 setup() {
+
     if [ ! -d ${OSDEV_SHORT_TERM_DIR} ]; then
         _exec "mkdir -p ${OSDEV_SHORT_TERM_DIR}"
     fi
@@ -116,12 +127,18 @@ setup() {
         echo "Create git dir"
         _exec "mkdir -p ${OSDEV_GIT_CACHE_DIR}"
     fi
+
+    if [ -f ${OSDEV_RC_PATH} ]; then
+        . ${OSDEV_RC_PATH}
+    else
+        touch . ${OSDEV_RC_PATH}
+    fi
 }
 
 launch_project() {
     if [ ${OSDEV_PROJECT_LAUNCHER:-''} != '' ]; then
         ${OSDEV_PROJECT_LAUNCHER} ${1} &
-        echo "Launched via: ${OSDEV_PROJECT_LAUNCHER}"
+        echo "Launched ${1} via: ${OSDEV_PROJECT_LAUNCHER}"
     fi
 }
 
@@ -138,7 +155,7 @@ validate_plugin_args() {
     if [[ ${#ARGS[@]} != ${#OSDEV_PLUGIN_ARGS[@]} ]]; then
         echo "Missing required arguments"
         declare -a _names=(${OSDEV_PLUGIN_NAME})
-        echo_plugin_usage_line _names[@] "Usage: "
+        echo_plugin_usage_line _names[@] "  Usage: "
         exit 1
     fi
 
@@ -220,7 +237,7 @@ echo_plugin_usage_line() {
 
     for _plugin_name in ${_plugin_names[@]}; do
         load_plugin ${OSDEV_PLUGINS[${_plugin_name}]}
-        echo_current_plugin_usage_line ${_prefix}
+        echo_current_plugin_usage_line "${_prefix}"
     done
 
     unload_plugin

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 OSDEV_PLUGIN_VERSION=1.0
-OSDEV_PLUGIN_NAME=new-change
+OSDEV_PLUGIN_NAME=new
 declare -xga OSDEV_PLUGIN_ARGS=(project topic)
 declare -xgA OSDEV_PLUGIN_KW_ARGS
 OSDEV_PLUGIN_KW_ARGS[depends_id]=$'The change ID the new topic depends on.'

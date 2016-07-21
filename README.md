@@ -29,6 +29,7 @@ export OSDEV_PROJECT_LAUNCHER=/path/to/myexe
 
 * Remove the ENV vars you setup during installation.
 * Delete the ``osdev`` git directory from installation.
+* Delete the ``~/.osdev`` directory.
 
 
 ## Usage
