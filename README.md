@@ -1,6 +1,14 @@
 # osdev
 
-THIS PROJECT IS A WORK IN PROGRESS
+THIS PROJECT IS NOT MAINTAINED!
+
+I've started using the gerrit plugin for pycharm as well as
+a few [git aliases](https://github.com/bodenr/openstack-git) to
+achieve a smoother workflow. However, I'm leaving this project
+around for reference.
+
+
+
 
 osdev is a pluggable bash script that automates a number of my OpenStack development
 tasks. While the current plugins focus on automating a number of [OpenStack gerrit workflows](http://docs.openstack.org/infra/manual/developers.html),
